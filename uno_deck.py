@@ -23,7 +23,7 @@ class Card:
             rank = self.rank
         #End Solutions
            
-        return f"{rank} of {self.clr}"
+        return f"{self.clr} {rank}"
 
 import random
 
