@@ -20,12 +20,11 @@ class Card:
         elif self.rank == 12:
             rank = "Skip"
         elif self.rank == 13:
-            rank = "Wild"
+            rank = "Card"
         elif self.rank == 14:
             rank = "Draw 4"
         else:
             rank = self.rank
-        #End Solutions
            
         return f"{self.clr} {rank}"
 
@@ -56,8 +55,41 @@ class Deck:
         return drawn_cards
     
     def game_start(self):
-        self.middle = self.draw(1)
+        pos=0
+        possible_card = self.cards[0]
+        valid_colors = ["Red", "Blue", "Green", "Yellow"]
+        valid_nums = [0,1,2,3,4,5,6,7,8,9]
+        #print(str(possible_card).split()[0])
+        if str(possible_card).split()[0] in valid_colors and\
+            int(str(possible_card).split()[1]) in valid_nums:
+            self.middle = self.draw(1)
+            print(f"This is the card in the middle {self.middle[0]}")
+            return
+        while str(possible_card).split()[0] not in valid_colors or\
+            int(str(possible_card).split()[1]) not in valid_nums:
+            pos+=1
+            possible_card = self.cards[pos]
+        self.middle = [possible_card]
+        self.cards = self.cards[0:pos]+self.cards[pos+1::]
+
         print(f"This is the card in the middle {self.middle[0]}")
+    
+    def reshuffle(self):
+        new_middle = [self.middle[0]]
+        self.cards = self.middle[1::] + self.cards
+        self.shuffle()
+        self.middle = new_middle
+    
+    def check_match(self, card):
+        type_of_card = str(card).split()
+        middle_card = str(self.middle[0]).split()
+        if type_of_card[0] == middle_card[0] or \
+            type_of_card[1] == middle_card[1]:
+            return True
+        return False
+
+
+        
 
 
 class Player:
@@ -77,12 +109,24 @@ class Player:
     
     def play_card(self, card):
         try:
+            if len(self.hand) == 0:
+                raise IndexError
             if card not in self.hand:
+                raise ValueError
+            if not self.deck.check_match(card):
                 raise ValueError
             print("Successful card play")
             print(f"{self.hand}")
-        
-        except ValueError:
+            pos = self.hand.index(card)
+            if pos < len(self.hand) -1:
+                self._hand = self.hand[0:pos] + self.hand[pos+1::]
+                print(f"{self.hand}")
+            else:
+                self._hand = self.hand[0:pos]
+
+            self.deck.middle=[card] + self.deck.middle
+            print(f"{self.deck.middle}")
+        except (ValueError,IndexError):
             print(f"{card} is not in your hand, your hand is {self.hand}")
             
 
@@ -101,13 +145,13 @@ class PlayGame:
         return self
     
     def __next__(self):
-        if self.hand > 1:
-            self._player_cycle = Cycle(self.players)
-            self._current_player = next(self._player_cycle)
-        elif self.hand <= 1 and self.hand != 0:
-            
-        else:
-            raise stopIteration
+        pass
+#        if self.hand > 1:
+#            self._player_cycle = Cycle(self.players)
+#            self._current_player = next(self._player_cycle)
+#        elif self.hand <= 1 and self.hand != 0:
+#        else:
+#            raise stopIteration
         
         
     
