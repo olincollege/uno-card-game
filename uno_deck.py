@@ -4,7 +4,7 @@ class Card:
         """
         Args:
             suit: A string representing the suit.
-            rank: An int represnting the rank of the card (11-13 is J, Q, K).
+            rank: An int represnting the rank of the card (10-14 is Draw Two, Reverse, Skip and Wild Draw).
         """
         self.clr = clr
         self.rank = rank
@@ -20,7 +20,7 @@ class Card:
         elif self.rank == 12:
             rank = "Skip"
         elif self.rank == 13:
-            rank = "Card"
+            rank = "Wild"
         elif self.rank == 14:
             rank = "Draw 4"
         else:
@@ -84,6 +84,30 @@ class Player:
         
         except ValueError:
             print(f"{card} is not in your hand, your hand is {self.hand}")
+            
+
     
-
-
+    
+class PlayGame:
+    """
+    iterate through the game
+    """
+    
+    def __init__(self,hand):
+        self.hand = hand
+           
+    def __iter__(self):
+        self.n = 0
+        return self
+    
+    def __next__(self):
+        if self.hand > 1:
+            self._player_cycle = Cycle(self.players)
+            self._current_player = next(self._player_cycle)
+        elif self.hand <= 1 and self.hand != 0:
+            
+        else:
+            raise stopIteration
+        
+        
+    
