@@ -81,15 +81,18 @@ class Deck:
         self.middle = new_middle
     
     def check_match(self, card):
-        type_of_card = str(card).split()
-        middle_card = str(self.middle[0]).split()
-        if type_of_card[0] == middle_card[0] or \
-            type_of_card[1] == middle_card[1]:
+        #type_of_card = card
+        middle_card = self.middle[0]
+        if middle_card.clr == card.clr:
+            return True
+        elif middle_card.rank == card.rank:
             return True
         return False
 
-
-        
+        #if type_of_card[0] == middle_card[0] or \
+        #    type_of_card[1] == middle_card[1]:
+        #    return True
+        #return False
 
 
 class Player:
@@ -146,12 +149,5 @@ class PlayGame:
     
     def __next__(self):
         pass
-#        if self.hand > 1:
-#            self._player_cycle = Cycle(self.players)
-#            self._current_player = next(self._player_cycle)
-#        elif self.hand <= 1 and self.hand != 0:
-#        else:
-#            raise stopIteration
-        
         
     
