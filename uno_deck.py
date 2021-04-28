@@ -50,6 +50,8 @@ class Deck:
         random.shuffle(self.cards)
         
     def draw(self, number_of_cards):
+        if number_of_cards > len(self.cards):
+            self.reshuffle()
         drawn_cards = self.cards[0:number_of_cards]
         self.cards = self.cards[number_of_cards:]
         return drawn_cards
@@ -83,7 +85,7 @@ class Deck:
     def check_match(self, card):
         #type_of_card = card
         middle_card = self.middle[0]
-        if middle_card.clr == card.clr:
+        if middle_card.clr == card.clr or card.clr == "Wild":
             return True
         elif middle_card.rank == card.rank:
             return True
@@ -93,6 +95,11 @@ class Deck:
         #    type_of_card[1] == middle_card[1]:
         #    return True
         #return False
+
+    def check_action(self, card):
+        if card.rank in range(10,15):
+            return True
+        return False
 
 
 class Player:
@@ -131,23 +138,65 @@ class Player:
             print(f"{self.deck.middle}")
         except (ValueError,IndexError):
             print(f"{card} is not in your hand, your hand is {self.hand}")
-            
 
+    def draw(self, number_of_cards):
+        self._hand += self._deck.draw(number_of_cards)
     
     
 class PlayGame:
     """
     iterate through the game
     """
+
+    player_list = []
     
-    def __init__(self,hand):
-        self.hand = hand
-           
-    def __iter__(self):
-        self.n = 0
-        return self
+    def __init__(self, deck):
+        self.deck = deck
+        self.deck.shuffle()
+        player_1 = Player(deck)
+        player_2 = Player(deck)
+        player_3 = Player(deck)
+        player_4 = Player(deck)
+        self.player_list = [player_1, \
+                            player_2, \
+                            player_3, \
+                            player_4]
+        self.order = 1
+        self.current_player = 0
+        self.deck.game_start()
     
-    def __next__(self):
-        pass
+
+    def next_player(self):
+        next_turn =self.current_player+1*self.order
+        if next_turn == -1:
+            next_turn = 3
+        elif next_turn == 4:
+            next_turn = 0
+        return next_turn
+    
+    def draw_card_played(self, number_of_cards):
+        self.player_list[self.next_player()].draw(number_of_cards)
+        self.skip_card_played()
+    
+    def reverse_card_played(self):
+        self.order = self.order*-1
+
+    def wild_card_played(self):
+        color_chosen = input("Choose one of the colors, type as seen ---> Red/Green/Blue/Yellow")
+        self.deck.middle[0].clr = color_chosen
+    
+    def skip_card_played(self):
+        self.current_player=self.next_player()
+
+
+
+
+            
+#   def __iter__(self):
+#        self.n = 0
+#        return self
+#    
+#    def __next__(self):
+#        pass
         
     
