@@ -22,7 +22,7 @@ class Card:
         elif self.rank == 13:
             rank = "Card"
         elif self.rank == 14:
-            rank = "Draw 4"
+            rank = "Draw Four"
         else:
             rank = self.rank
            
@@ -59,16 +59,16 @@ class Deck:
     def game_start(self):
         pos=0
         possible_card = self.cards[0]
-        valid_colors = ["Red", "Blue", "Green", "Yellow"]
-        valid_nums = [0,1,2,3,4,5,6,7,8,9]
+        invalid_colors = ["Wild"]
+        invalid_nums = ["Draw Four", "Card", "Reverse", "Skip", "Draw Two"]
         #print(str(possible_card).split()[0])
-        if str(possible_card).split()[0] in valid_colors and\
-            int(str(possible_card).split()[1]) in valid_nums:
+        if str(possible_card).split()[0] not in invalid_colors and\
+            str(possible_card).split()[1] not in invalid_nums:
             self.middle = self.draw(1)
             print(f"This is the card in the middle {self.middle[0]}")
             return
-        while str(possible_card).split()[0] not in valid_colors or\
-            int(str(possible_card).split()[1]) not in valid_nums:
+        while str(possible_card).split()[0] in invalid_colors or\
+            str(possible_card).split()[1] in invalid_nums:
             pos+=1
             possible_card = self.cards[pos]
         self.middle = [possible_card]
@@ -125,19 +125,18 @@ class Player:
                 raise ValueError
             if not self.deck.check_match(card):
                 raise ValueError
-            print("Successful card play")
-            print(f"{self.hand}")
             pos = self.hand.index(card)
             if pos < len(self.hand) -1:
                 self._hand = self.hand[0:pos] + self.hand[pos+1::]
-                print(f"{self.hand}")
             else:
                 self._hand = self.hand[0:pos]
 
             self.deck.middle=[card] + self.deck.middle
-            print(f"{self.deck.middle}")
+            return True
         except (ValueError,IndexError):
-            print(f"{card} is not in your hand, your hand is {self.hand}")
+            print(f"This is not valid move, your hand is {self.hand}")
+            print(f"The Card in the middle is: {self.deck.middle[0]}")
+            return False
 
     def draw(self, number_of_cards):
         self._hand += self._deck.draw(number_of_cards)
@@ -163,7 +162,6 @@ class PlayGame:
                             player_4]
         self.order = 1
         self.current_player = 0
-        self.deck.game_start()
     
 
     def next_player(self):
@@ -185,8 +183,70 @@ class PlayGame:
         color_chosen = input("Choose one of the colors, type as seen ---> Red/Green/Blue/Yellow")
         self.deck.middle[0].clr = color_chosen
     
+    def check_for_matches(self, player):
+        for card in player._hand:
+            if self.deck.check_match(card):
+                return True
+        player.draw(1)
+        print("You had no matches so you take from the deck, here is your new hand")
+        print(player._hand)
+        return self.check_for_matches(player)
+        
+
+    
     def skip_card_played(self):
         self.current_player=self.next_player()
+
+    def check_win(self):
+        for player in self.player_list:
+            if len(player._hand) == 0:
+                return True
+        return False
+    
+    def player_turn(self, player, card_pos):
+        try:
+            card_pos = int(card_pos) -1
+            if card_pos > len(player._hand)-1:
+                raise IndexError
+            if not player.play_card(player._hand[card_pos]):
+                raise ValueError
+            if self.deck.check_action(self.deck.middle[0]):
+                action = self.deck.middle[0].rank
+                if action == "Draw Two":
+                    self.draw_card_played(2)
+                elif action == "Reverse":
+                    self.reverse_card_played()
+                elif action == "Skip":
+                    self.skip_card_played()
+                elif action == "Card":
+                    self.wild_card_played()
+                elif action == "Draw Four":
+                    self.wild_card_played()
+                    self.draw_card_played(4)
+        except (IndexError, ValueError):
+            print("ERROR")
+            self.current_player= self.current_player - 1*self.order
+
+
+
+    def play(self):
+        self.deck.game_start()
+        self.current_player = 0
+        while not self.check_win():
+            print(f"It is {self.current_player+1}'s Turn")
+            print(f"This is your hand: {self.player_list[self.current_player]._hand}")
+            card_pos = input(f"Player {self.current_player + 1} which card do you want to play type 1 or 2 or ...:")
+            self.player_turn(self.player_list[self.current_player], card_pos)
+            self.current_player = self.next_player()
+            print(f"This is the card in the middle: {self.deck.middle[0]}")
+
+
+            
+            
+            
+
+
+
 
 
 
