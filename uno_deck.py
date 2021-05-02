@@ -1,4 +1,12 @@
 class Card:
+    """
+    This creates a set of 112 cards in total: cards ranged from 0 to 9 for Blue, Green, Red and Yellow each (20 cards per color); 
+    8 Draw Two cards, 8 Reverse cards and 8 Skip cards with two cards per color eqch;
+    4 Wild cards and 4 Wild Draw Four cards.
+
+    Attributes:
+    rank: an integer representing the number on the card
+    """
     
     def __init__(self, clr, rank):
         """
@@ -31,6 +39,20 @@ class Card:
 import random
 
 class Deck:
+    """
+    This defines and records the cards in the deck that players are going to draw from.
+    When cards in the deck are run out, the discarded cards are reshuffled and made into a new deck.
+
+    Attributes:
+    number_of_cards: an integer representing the total number of cards left in the deck
+    drawn_cards: a list containing the cards drawn to players from the deck
+    pos: a number which represents the position of the card in the deck
+    possible_card: a method defined in the previous class which represents the cards that might appear in the deck
+    invalid_colors: a list containing the colors that are not valid and should be discarded if appearing to be the first of the deck
+    invalid_numbers: a list containing the numbers that are not valid and should be discarded if appearing to be the first of the deck
+    new_middle: a list representing the cards in the reshuffled deck
+    middle_card: a list containing cards in the deck
+    """
 
     def __init__(self):
         self.cards = []
@@ -91,11 +113,6 @@ class Deck:
             return True
         return False
 
-        #if type_of_card[0] == middle_card[0] or \
-        #    type_of_card[1] == middle_card[1]:
-        #    return True
-        #return False
-
     def check_action(self, card):
         if card.rank in range(10,15):
             return True
@@ -103,7 +120,14 @@ class Deck:
 
 
 class Player:
+    """
+    This defines and records the cards in players' hands.
 
+    Attributes:
+    _deck: a list representing cards from the deck
+    _hand: a list representing cards in a player's hand
+
+    """
 
     def __init__(self, Deck):
         self._deck = Deck
@@ -145,6 +169,22 @@ class Player:
 class PlayGame:
     """
     iterate through the game
+    color_chosen: an input arguement which allows players to enter the color of the card they want to play/discard
+    valid
+
+    Attributes:
+    player_list: a list representing all the players in the game in sequence
+    player_1: a list containing the deck of cards on the first player's hand
+    player_2: a list containing the deck of cards on the second player's hand
+    player_3: a list containing the deck of cards on the third player's hand
+    player_4: a list containing the deck of cards on the fourth player's hand
+    order:
+    current_player: a integer referring to the order of the current player
+    next_turn: an integer which decides the next player after current player's turn
+    skip_card_played:
+    color_chosen: an input arguement which allows the player to enter the next color they want to play after discarding a wild card
+    valid_colors: a list containing the colors that are valid might appear in the set of cards
+    card_pos: an input arguement which allows the player to enter the position of the card they want to play/discard from the hand
     """
 
     player_list = []
@@ -252,19 +292,3 @@ class PlayGame:
             
             
             
-
-
-
-
-
-
-
-            
-#   def __iter__(self):
-#        self.n = 0
-#        return self
-#    
-#    def __next__(self):
-#        pass
-        
-    
