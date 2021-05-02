@@ -181,8 +181,12 @@ class PlayGame:
 
     def wild_card_played(self):
         color_chosen = input("Choose one of the colors, type as seen ---> Red/Green/Blue/Yellow")
-        self.deck.middle[0].clr = color_chosen
-    
+        valid_colors = ["Red","Green", "Blue", "Yellow"]
+        if color_chosen in valid_colors:
+            self.deck.middle[0].clr = color_chosen
+        else:
+            print("That is not a valid input please follow the correct format: \"Red\"")
+        
     def check_for_matches(self, player):
         for card in player._hand:
             if self.deck.check_match(card):
@@ -212,15 +216,15 @@ class PlayGame:
                 raise ValueError
             if self.deck.check_action(self.deck.middle[0]):
                 action = self.deck.middle[0].rank
-                if action == "Draw Two":
+                if action == 10:
                     self.draw_card_played(2)
-                elif action == "Reverse":
+                elif action == 11:
                     self.reverse_card_played()
-                elif action == "Skip":
+                elif action == 12:
                     self.skip_card_played()
-                elif action == "Card":
+                elif action == 13:
                     self.wild_card_played()
-                elif action == "Draw Four":
+                elif action == 14:
                     self.wild_card_played()
                     self.draw_card_played(4)
         except (IndexError, ValueError):
@@ -234,11 +238,15 @@ class PlayGame:
         self.current_player = 0
         while not self.check_win():
             print(f"It is {self.current_player+1}'s Turn")
+            #for n in range(0,4):
+            #    print(f"Player {n+1}: {self.player_list[n]._hand}")
             print(f"This is your hand: {self.player_list[self.current_player]._hand}")
+            self.check_for_matches(self.player_list[self.current_player])
             card_pos = input(f"Player {self.current_player + 1} which card do you want to play type 1 or 2 or ...:")
             self.player_turn(self.player_list[self.current_player], card_pos)
             self.current_player = self.next_player()
-            print(f"This is the card in the middle: {self.deck.middle[0]}")
+            input(f"Hit Enter once {self.current_player+1} is at the computer")
+            print(f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
 
 
             
