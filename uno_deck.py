@@ -129,9 +129,11 @@ class Player:
 
     """
 
-    def __init__(self, Deck):
+    def __init__(self, Deck, name):
         self._deck = Deck
         self._hand = self._deck.draw(7)
+        self._name = name
+
     
     @property
     def deck(self):
@@ -164,6 +166,12 @@ class Player:
 
     def draw(self, number_of_cards):
         self._hand += self._deck.draw(number_of_cards)
+
+    def __repr__(self):
+        string = ""
+        for n in range(0,len(self._hand)):
+            string = string + f"Card {n+1}: {self._hand[n]}\n"
+        return string
     
     
 class PlayGame:
@@ -178,34 +186,34 @@ class PlayGame:
     player_2: a list containing the deck of cards on the second player's hand
     player_3: a list containing the deck of cards on the third player's hand
     player_4: a list containing the deck of cards on the fourth player's hand
-    order:
+    direction: an int representing which direction the list is being cycled through
     current_player: a integer referring to the order of the current player
     next_turn: an integer which decides the next player after current player's turn
     skip_card_played:
-    color_chosen: an input arguement which allows the player to enter the next color they want to play after discarding a wild card
+    color_chosen: an input argument which allows the player to enter the next color they want to play after discarding a wild card
     valid_colors: a list containing the colors that are valid might appear in the set of cards
     card_pos: an input arguement which allows the player to enter the position of the card they want to play/discard from the hand
     """
 
     player_list = []
     
-    def __init__(self, deck):
+    def __init__(self, deck, player_names):
         self.deck = deck
         self.deck.shuffle()
-        player_1 = Player(deck)
-        player_2 = Player(deck)
-        player_3 = Player(deck)
-        player_4 = Player(deck)
+        player_1 = Player(deck, str(player_names[0]))
+        player_2 = Player(deck, str(player_names[1]))
+        player_3 = Player(deck, str(player_names[2]))
+        player_4 = Player(deck, str(player_names[3]))
         self.player_list = [player_1, \
                             player_2, \
                             player_3, \
                             player_4]
-        self.order = 1
+        self.direction = 1
         self.current_player = 0
     
 
     def next_player(self):
-        next_turn =self.current_player+1*self.order
+        next_turn =self.current_player+1*self.direction
         if next_turn == -1:
             next_turn = 3
         elif next_turn == 4:
@@ -217,10 +225,10 @@ class PlayGame:
         self.skip_card_played()
     
     def reverse_card_played(self):
-        self.order = self.order*-1
+        self.direction = self.direction*-1
 
     def wild_card_played(self):
-        color_chosen = input("Choose one of the colors, type as seen ---> Red/Green/Blue/Yellow")
+        color_chosen = input("Choose one of the colors, type as seen: Red/Green/Blue/Yellow")
         valid_colors = ["Red","Green", "Blue", "Yellow"]
         if color_chosen in valid_colors:
             self.deck.middle[0].clr = color_chosen
@@ -269,7 +277,7 @@ class PlayGame:
                     self.draw_card_played(4)
         except (IndexError, ValueError):
             print("ERROR")
-            self.current_player= self.current_player - 1*self.order
+            self.current_player= self.current_player - 1*self.direction
 
 
 
@@ -277,16 +285,24 @@ class PlayGame:
         self.deck.game_start()
         self.current_player = 0
         while not self.check_win():
+            uno_declare = ""
             print(f"It is {self.current_player+1}'s Turn")
-            #for n in range(0,4):
-            #    print(f"Player {n+1}: {self.player_list[n]._hand}")
-            print(f"This is your hand: {self.player_list[self.current_player]._hand}")
+            print(f"This is your hand:\n{self.player_list[self.current_player]}")
             self.check_for_matches(self.player_list[self.current_player])
-            card_pos = input(f"Player {self.current_player + 1} which card do you want to play type 1 or 2 or ...:")
+            card_pos = input(f"{self.player_list[self.current_player]._name} which card do you want to play type 1 or 2 or ...:")
             self.player_turn(self.player_list[self.current_player], card_pos)
+            print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            uno_declare = input("Hit enter once you are finished with your turn")
+            if len(self.player_list[self.current_player]._hand) == 1 and uno_declare != "Uno":
+                self.player_list[self.current_player].draw(2)
+                print("You forgot to say Uno :( you have to draw two cards")
+            elif len(self.player_list[self.current_player]._hand) == 1 and uno_declare == "Uno":
+                print("Uno!")
             self.current_player = self.next_player()
-            input(f"Hit Enter once {self.current_player+1} is at the computer")
+            input(f"Hit Enter once {self.player_list[self.current_player]._name} is at the computer")
+
             print(f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
+            
 
 
             
