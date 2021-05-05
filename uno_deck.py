@@ -131,7 +131,7 @@ class Player:
 
     def __init__(self, Deck, name):
         self._deck = Deck
-        self._hand = self._deck.draw(1)
+        self._hand = self._deck.draw(7)
         self._name = name
 
     
