@@ -6,58 +6,56 @@ from abc import ABC, abstractmethod
 
 class UnoController(ABC):
     """
-    Abstract base class representing a controller for a tic-tac-toe game.
+    Abstract base class representing a controller for a Uno game.
 
     Attributes:
-        _board: A Uno instance representing the tic-tac-toe game to
+        _board: A Uno instance representing the Uno game to
             send moves to.
     """
 
-    def __init__(self, board):
+    def __init__(self, deck):
         """
-        Create a new controller for a tic-tac-toe game.
+        Create a new controller of a uno game.
 
         Args:
-            board: A TicTacToeBoard instance representing the tic-tac-toe game
-                to send moves to.
+            board: A Uno game instance representing the uno game
+                to control.
         """
-        self._board = board
+        self._deck = deck
 
     @property
-    def board(self):
+    def game(self):
         """
-        Return the TicTacToeBoard instance this controller interacts with.
+        Return the Uno game instance being controlled.
         """
-        return self._board
+        return self._deck
 
     @abstractmethod
-    def move(self):
+    def start(self):
         """
-        Make a valid move in the current board.
+        Send the start singal to the game.
         """
         pass
 
 
-class TextController(TicTacToeController):
+class TextController(UnoController):
     """
-    Text-based controller for tic-tac-toe that takes user input representing
-    board coordinates.
+    Text-based controller for Uno Game that takes user input representing
+    player names.
     """
 
-    def move(self):
+    from uno_deck import PlayGame
+
+    def start(self):
         """
-        Obtain text input from the user to make a move in the current board,
-        repeating the process until a valid move is made.
+        Obtain text input from the user to give names to the players and start the game.
         """
-        move = input("Input row/column numbers for your move, separated by a"
-                     " space (e.g., \"0 0\"): ")
+        names = input("Input four players names with a single space in between \
+            (e.g., \"name1 name2 ...\"): ").split()
         try:
-            numbers = move.strip().split()
-            row = int(numbers[0])
-            col = int(numbers[1])
-            if row < 0 or col < 0:
+            if len(names)!=4:
                 raise ValueError
-            self._board.mark(row, col)
+            return names
         except (IndexError, ValueError):
-            print(f"Error with input '{move}'. Please try again.")
-            self.move()
+            print(f"Error with input '{names}'. Please try again.")
+            self.start()

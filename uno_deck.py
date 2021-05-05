@@ -131,7 +131,7 @@ class Player:
 
     def __init__(self, Deck, name):
         self._deck = Deck
-        self._hand = self._deck.draw(7)
+        self._hand = self._deck.draw(1)
         self._name = name
 
     
@@ -142,6 +142,13 @@ class Player:
     @property
     def hand(self):
         return self._hand
+    
+    @property
+    def name(self):
+        return self._name
+
+    def display_name(self):
+        return str(self._name())
     
     def play_card(self, card):
         try:
@@ -166,6 +173,11 @@ class Player:
 
     def draw(self, number_of_cards):
         self._hand += self._deck.draw(number_of_cards)
+    
+    def check_empty(self):
+        if len(self._hand) == 0:
+            return True
+        return False
 
     def __repr__(self):
         string = ""
@@ -228,7 +240,7 @@ class PlayGame:
         self.direction = self.direction*-1
 
     def wild_card_played(self):
-        color_chosen = input("Choose one of the colors, type as seen: Red/Green/Blue/Yellow")
+        color_chosen = input("Choose one of the colors, type as seen: Red/Green/Blue/Yellow: ")
         valid_colors = ["Red","Green", "Blue", "Yellow"]
         if color_chosen in valid_colors:
             self.deck.middle[0].clr = color_chosen
@@ -282,26 +294,26 @@ class PlayGame:
 
 
     def play(self):
-        self.deck.game_start()
-        self.current_player = 0
-        while not self.check_win():
-            uno_declare = ""
-            print(f"It is {self.current_player+1}'s Turn")
-            print(f"This is your hand:\n{self.player_list[self.current_player]}")
-            self.check_for_matches(self.player_list[self.current_player])
-            card_pos = input(f"{self.player_list[self.current_player]._name} which card do you want to play type 1 or 2 or ...:")
-            self.player_turn(self.player_list[self.current_player], card_pos)
-            print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-            uno_declare = input("Hit enter once you are finished with your turn")
-            if len(self.player_list[self.current_player]._hand) == 1 and uno_declare != "Uno":
-                self.player_list[self.current_player].draw(2)
-                print("You forgot to say Uno :( you have to draw two cards")
-            elif len(self.player_list[self.current_player]._hand) == 1 and uno_declare == "Uno":
-                print("Uno!")
-            self.current_player = self.next_player()
-            input(f"Hit Enter once {self.player_list[self.current_player]._name} is at the computer")
-
-            print(f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
+        uno_declare = ""
+        print(f"It is {self.player_list[self.current_player]._name}'s Turn")
+        self.check_for_matches(self.player_list[self.current_player])
+        print(f"This is your hand:\n{self.player_list[self.current_player]}")
+        card_pos = input(f"{self.player_list[self.current_player]._name} which card do you want to play type 1 or 2 or ...: ")
+        self.player_turn(self.player_list[self.current_player], card_pos)
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        uno_declare = input("Hit enter once you are finished with your turn ")
+        if len(self.player_list[self.current_player]._hand) == 1 and uno_declare != "Uno":
+            self.player_list[self.current_player].draw(2)
+            print("You forgot to say Uno :( you have to draw two cards")
+        elif len(self.player_list[self.current_player]._hand) == 1 and uno_declare == "Uno":
+            print("Uno!")
+        self.current_player = self.next_player()
+        input(f"Hit Enter once {self.player_list[self.current_player]._name} is at the computer")
+        print(f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
+    
+    def win_message(self, player):
+        print(f"Congrats {player._name}! You have won! Please continue to rub it in your opponents face now")
             
 
 

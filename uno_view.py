@@ -48,5 +48,5 @@ class TextView(UnoView):
         Display a representation of the current state of the game.
         """
         for player in self.game.player_list:
-            print("\t12345")
-            print(f"{player._name}:\t"+(u'\u258a'*len(player._hand)))
+            print(f"{player._name}:\n\t\t12345")
+            print(("\t\t"+u'\u258a'*len(player._hand))+"\n")
