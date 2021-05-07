@@ -53,7 +53,7 @@ class TextController(UnoController):
         names = input("Input four players names with a single space in between \
             (e.g., \"name1 name2 ...\"): ").split()
         try:
-            if len(names)!=4:
+            if len(names) != 4:
                 raise ValueError
             return names
         except (IndexError, ValueError):
