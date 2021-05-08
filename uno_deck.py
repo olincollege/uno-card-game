@@ -23,6 +23,12 @@ class Card:
         self.rank = rank
 
     def __repr__(self):
+        """
+        Define the rank of special cards (including Draw Two, Reverse, Skip, Wild and Wild Draw Four cards) in the card list
+
+        Return:
+            a list? that represents the information of a card's color and number
+        """
         # Draw Two = 10, Reverse=11, Skip=12
         # We still have think about the wild and wild draw 4
         # Solution to Question 1 (below) goes here
@@ -59,6 +65,9 @@ class Deck:
     """
 
     def __init__(self):
+         """
+        Store initial values to arguments
+        """
         self.cards = []
         self.middle = []
         for clr in ["Red", "Blue", "Green", "Yellow"]:
@@ -72,9 +81,15 @@ class Deck:
             self.cards.append(Card("Wild", 14))
 
     def shuffle(self):
+        """
+        Shuffle all the cards for a random order.
+        """
         random.shuffle(self.cards)
 
     def draw(self, number_of_cards):
+        """
+        Allow players to draw cards from the deck to their hands
+        """
         if number_of_cards > len(self.cards):
             self.reshuffle()
         drawn_cards = self.cards[0:number_of_cards]
@@ -102,12 +117,18 @@ class Deck:
         print(f"This is the card in the middle {self.middle[0]}")
 
     def reshuffle(self):
+        """
+        Shuffle the discarded cards to make a new deck
+        """
         new_middle = [self.middle[0]]
         self.cards = self.middle[1::] + self.cards
         self.shuffle()
         self.middle = new_middle
 
     def check_match(self, card):
+        """
+        Check that the discarded card from the player's hand matches the top card on the deck
+        """
         #type_of_card = card
         middle_card = self.middle[0]
         if middle_card.clr == card.clr or card.clr == "Wild":
@@ -117,6 +138,9 @@ class Deck:
         return False
 
     def check_action(self, card):
+        """
+        Check that the card is an action card
+        """
         if card.rank in range(10, 15):
             return True
         return False
@@ -133,6 +157,9 @@ class Player:
     """
 
     def __init__(self, Deck, name):
+        """
+        Store initial values to arguments
+        """
         self._deck = Deck
         self._hand = self._deck.draw(7)
         self._name = name
@@ -150,9 +177,15 @@ class Player:
         return self._name
 
     def display_name(self):
+        """
+        Display player's name.
+        """
         return str(self._name())
 
     def play_card(self, card):
+        """
+        Allow the player to discard a card from their hands
+        """
         try:
             if len(self.hand) == 0:
                 raise IndexError
@@ -174,9 +207,15 @@ class Player:
             return False
 
     def draw(self, number_of_cards):
+        """
+        Allows the player to draw card/cards from the deck
+        """
         self._hand += self._deck.draw(number_of_cards)
 
     def check_empty(self):
+        """
+        Check if the player has no card left in the hand. If so, the player wins.
+        """
         if len(self._hand) == 0:
             return True
         return False
@@ -212,6 +251,9 @@ class PlayGame:
     player_list = []
 
     def __init__(self, deck, player_names):
+        """
+        Store initial values of arguments
+        """
         self.deck = deck
         self.deck.shuffle()
         player_1 = Player(deck, str(player_names[0]))
@@ -226,6 +268,9 @@ class PlayGame:
         self.current_player = 0
 
     def next_player(self):
+        """
+        Allow the next player in the turn to play game 
+        """
         next_turn = self.current_player+1*self.direction
         if next_turn == -1:
             next_turn = 3
@@ -234,13 +279,22 @@ class PlayGame:
         return next_turn
 
     def draw_card_played(self, number_of_cards):
+        """
+        Define the next player when a Draw Two card is played
+        """
         self.player_list[self.next_player()].draw(number_of_cards)
         self.skip_card_played()
 
     def reverse_card_played(self):
+        """
+        Define the next player when a Reverse card is played
+        """
         self.direction = self.direction*-1
 
     def wild_card_played(self):
+        """
+        Define the next player when a Wild Card is played
+        """
         color_chosen = input(
             "Choose one of the colors, type as seen: Red/Green/Blue/Yellow: ")
         valid_colors = ["Red", "Green", "Blue", "Yellow"]
@@ -250,6 +304,9 @@ class PlayGame:
             print("That is not a valid input please follow the correct format: \"Red\"")
 
     def check_for_matches(self, player):
+        """
+        Check if the card in the player's hand matches the card in the middle of the deck
+        """
         for card in player._hand:
             if self.deck.check_match(card):
                 return True
@@ -259,9 +316,15 @@ class PlayGame:
         return self.check_for_matches(player)
 
     def skip_card_played(self):
+        """
+        Define the next player when a Skip Card is played
+        """
         self.current_player = self.next_player()
 
     def check_win(self):
+        """
+        Check if any player has run out off all the cards in the hand; if so, the player wins
+        """
         for player in self.player_list:
             if len(player._hand) == 0:
                 return True
@@ -314,5 +377,8 @@ class PlayGame:
             f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
 
     def win_message(self, player):
+        """
+        Print out the winning message
+        """
         print(
             f"Congrats {player._name}! You have won! Please continue to rub it in your opponents face now")
