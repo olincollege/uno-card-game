@@ -12,6 +12,9 @@ from uno_deck import (
     PlayGame
 )
 
+#create test
+
+
 
 @pytest.mark.parametrize("color, rank, resulting_card", [
     # Checks that creating a card with a minimum rank is created correctly
@@ -73,3 +76,107 @@ def test_shuffle():
     uno_deck.shuffle()
     shuffled_uno_cards = [] +uno_deck.cards
     assert uno_cards != shuffled_uno_cards
+
+@pytest.mark.parametrize("number_cards_pulled, resulting_deck_count, resulting_draw_count", [
+    # Checks that the draw of 112 cards results in proper values
+    (112, 0, 112),
+    # Check a draw of 0
+    (0, 112, 0),
+    # Check a draw of 1
+    (1, 111, 1),
+    # Check a draw of 4 
+    (4, 108, 4),
+])
+def test_deck_draw(number_cards_pulled, resulting_deck_count, resulting_draw_count):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    shuffled_uno_deck = Deck()
+    shuffled_uno_deck.shuffle()
+    drawn_cards = shuffled_uno_deck.draw(number_cards_pulled)
+    
+
+    assert (len(shuffled_uno_deck.cards), len(drawn_cards)) == \
+        (resulting_deck_count, resulting_draw_count)
+
+@pytest.mark.parametrize("card, is_match", [
+    # Checks that the draw of 112 cards results in proper values
+    (Card("Red",0), True),
+    # Check a draw of 0
+    (Card("Red",1), True),
+    # Check a draw of 1
+    (Card("Blue",0), True),
+    # Check a draw of 4 
+    (Card("Blue",1), False),
+    (Card("Red",10), True),
+    (Card("Blue",10), False),
+    (Card("Wild",13), True),
+    (Card("Wild",14), True),
+])
+def test_deck_check_match(card, is_match):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_deck.game_start()
+
+    assert uno_deck.check_match(card) == is_match
+
+@pytest.mark.parametrize("card, is_action", [
+    # Checks that the draw of 112 cards results in proper values
+    (Card("Red",0), False),
+    # Check a draw of 0
+    (Card("Blue",1), False),
+    # Check a draw of 1
+    (Card("Yellow",10), True),
+    # Check a draw of 4 
+    (Card("Green",11), True),
+    (Card("Red",12), True),
+    (Card("Wild",13), True),
+    (Card("Wild",14), True),
+])
+def test_deck_check_action(card, is_action):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    assert uno_deck.check_action(card) == is_action
+
+@pytest.mark.parametrize("number_cards_pulled, number_cards_in_hand", [
+    # Checks that the draw of 112 cards results in proper values
+    (2,9),
+    # Check a draw of 0
+    (0,7),
+    # Check a draw of 1
+    (1,8),
+    # Check a draw of 4 
+    (13,20),
+])
+def test_player_draw(number_cards_pulled, number_cards_in_hand):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_player = Player(uno_deck,"name")
+    uno_player.draw(number_cards_pulled)
+    assert len(uno_player.hand)== number_cards_in_hand
