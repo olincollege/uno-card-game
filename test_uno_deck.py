@@ -12,7 +12,10 @@ from uno_deck import (
     PlayGame
 )
 
-#create test
+#create test objects
+test_uno_deck = Deck()
+test_uno_deck.game_start()
+test_uno_player = Player(test_uno_deck,"name")
 
 
 
@@ -157,6 +160,29 @@ def test_deck_check_action(card, is_action):
     uno_deck = Deck()
     assert uno_deck.check_action(card) == is_action
 
+@pytest.mark.parametrize("player_name", [
+    # Checks that the draw of 112 cards results in proper values
+    ("1","1"),
+    # Check a draw of 0
+    ("Name","Name"),
+    # Check a draw of 1
+    ("Name1","Name1"),
+    # Check a draw of 4 
+    ("",""),
+])
+def test_player_display_name(player_name):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_player = Player(uno_deck,player_name)
+    assert uno_player.display_name()== player_name
+
 @pytest.mark.parametrize("number_cards_pulled, number_cards_in_hand", [
     # Checks that the draw of 112 cards results in proper values
     (2,9),
@@ -180,3 +206,122 @@ def test_player_draw(number_cards_pulled, number_cards_in_hand):
     uno_player = Player(uno_deck,"name")
     uno_player.draw(number_cards_pulled)
     assert len(uno_player.hand)== number_cards_in_hand
+
+@pytest.mark.parametrize("card, resulting_hand_size, middle_size, successful_move", [
+    # Check a draw of 0
+    (test_uno_player.hand[2],6,2,True),
+])
+def test_player_play_card(card, resulting_hand_size, middle_size, successful_move):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    
+    assert (test_uno_player.play_card(card), len(test_uno_player.hand), len(test_uno_deck.middle)) == \
+        (successful_move, resulting_hand_size, middle_size)
+
+@pytest.mark.parametrize("set_direction, set_current_player, next_player", [
+    # Check a draw of 4
+    (1,0,1),
+    (-1,0,3),
+    (1,3,0),
+    (-1,3,2),
+])
+def test_next_player(set_direction, set_current_player, next_player):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_game = PlayGame(uno_deck, ["0","1","2","3"])
+    uno_game.direction= set_direction
+    uno_game.current_player = set_current_player
+    
+    
+    assert uno_game.next_player()==next_player
+
+@pytest.mark.parametrize("set_direction, set_current_player, number_of_cards, card_count_next_player, next_player", [
+    # Check a draw of 4
+    (1, 0, 4, 11, 2),
+    (1, 0, 2, 9, 2),
+    (1, 1, 2, 9, 3),
+    (1, 2, 2, 9, 0),
+    (-1, 0, 4, 11, 2),
+    (-1, 0, 2, 9, 2),
+    (-1, 1, 2, 9, 3),
+    (-1, 2, 2, 9, 0),
+])
+def test_draw_card_played(set_direction, set_current_player, number_of_cards, card_count_next_player, next_player):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_game = PlayGame(uno_deck, ["0","1","2","3"])
+    uno_game.direction= set_direction
+    uno_game.current_player = set_current_player
+    uno_game.draw_card_played(number_of_cards)
+    cards_next_player = len(uno_game.player_list[set_current_player+set_direction].hand)
+    new_player = uno_game.next_player()
+    
+    assert (cards_next_player, new_player)==(card_count_next_player,next_player)
+
+@pytest.mark.parametrize("set_direction, new_direction", [
+    # Check a draw of 4
+    (1, -1),
+    (-1, 1),
+])
+def test_reverse_played(set_direction, new_direction):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_game = PlayGame(uno_deck, ["0","1","2","3"])
+    uno_game.direction= set_direction
+    uno_game.reverse_card_played()
+    
+    assert uno_game.direction== new_direction
+
+@pytest.mark.parametrize("middle_card, set_player_hand, set_card_deck, resulting_player_hand_len", [
+    # Check a draw of 4
+    ([Card("Red", 1)], [Card("Red",0)], [Card("Blue", 2),Card("Yellow",3)], 1),
+    ([Card("Blue", 1)], [Card("Red",0)], [Card("Blue", 2),Card("Yellow",3)], 2),
+    ([Card("Green", 2)], [Card("Red",0)], [Card("Blue", 2),Card("Yellow",3)], 2),
+    ([Card("Yellow", 1)], [Card("Red",0)], [Card("Blue", 2),Card("Yellow",3)], 3),
+    ([Card("Green", 3)], [Card("Red",0)], [Card("Blue", 2),Card("Yellow",3)], 3),
+])
+def test_playgame_check_for_matches(middle_card, set_player_hand, set_card_deck, resulting_player_hand_len):
+    """
+    Checks that the average image finder returns an average of all the images in the list
+    using our second color averaging method.
+
+    Args:
+        image_list: a list representing the images to average.
+        resulting_image: a image representing the expected resulting average image.
+    """
+    uno_deck = Deck()
+    uno_deck.middle=middle_card
+    uno_game = PlayGame(uno_deck, ["0","1","2","3"])
+    uno_deck.cards=set_card_deck
+    uno_game.player_list[0]._hand=set_player_hand
+    uno_game.check_for_matches(uno_game.player_list[0])
+    length_of_hand =len(uno_game.player_list[0].hand)
+    
+    assert length_of_hand == resulting_player_hand_len

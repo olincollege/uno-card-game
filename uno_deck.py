@@ -16,7 +16,7 @@ class Card:
         """
         Args:
             suit: A string representing the suit.
-            rank: An int represnting the rank of the card (10-14 is Draw Two, Reverse, Skip
+            rank: An int representing the rank of the card (10-14 is Draw Two, Reverse, Skip
             and Wild Draw).
         """
         self.clr = clr
@@ -65,7 +65,7 @@ class Deck:
     """
 
     def __init__(self):
-         """
+        """
         Store initial values to arguments
         """
         self.cards = []
@@ -180,7 +180,7 @@ class Player:
         """
         Display player's name.
         """
-        return str(self._name())
+        return self.name
 
     def play_card(self, card):
         """
@@ -230,7 +230,7 @@ class Player:
 class PlayGame:
     """
     iterate through the game
-    color_chosen: an input arguement which allows players to enter the color of the card they want to play/discard
+    color_chosen: an input argument which allows players to enter the color of the card they want to play/discard
     valid
 
     Attributes:
@@ -245,7 +245,7 @@ class PlayGame:
     skip_card_played:
     color_chosen: an input argument which allows the player to enter the next color they want to play after discarding a wild card
     valid_colors: a list containing the colors that are valid might appear in the set of cards
-    card_pos: an input arguement which allows the player to enter the position of the card they want to play/discard from the hand
+    card_pos: an input argument which allows the player to enter the position of the card they want to play/discard from the hand
     """
 
     player_list = []
@@ -307,7 +307,7 @@ class PlayGame:
         """
         Check if the card in the player's hand matches the card in the middle of the deck
         """
-        for card in player._hand:
+        for card in player.hand:
             if self.deck.check_match(card):
                 return True
         player.draw(1)
