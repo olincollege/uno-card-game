@@ -82,13 +82,18 @@ class Deck:
 
     def shuffle(self):
         """
-        Shuffle all the cards for a random order.
+        Shuffle all the cards in cards for a random order.
         """
         random.shuffle(self.cards)
 
     def draw(self, number_of_cards):
         """
         Allow players to draw cards from the deck to their hands
+
+        Args:
+            number_of_cards: a int representing the number of cards to draw from the deck
+        Returns:
+            a list of the drawn cards pulled from the deck
         """
         if number_of_cards > len(self.cards):
             self.reshuffle()
@@ -97,11 +102,13 @@ class Deck:
         return drawn_cards
 
     def game_start(self):
+        """
+        The middle card is set, the middle card is checked to not be a action card.
+        """
         pos = 0
         possible_card = self.cards[0]
         invalid_colors = ["Wild"]
         invalid_nums = ["Draw Four", "Card", "Reverse", "Skip", "Draw Two"]
-        # print(str(possible_card).split()[0])
         if str(possible_card).split()[0] not in invalid_colors and\
                 str(possible_card).split()[1] not in invalid_nums:
             self.middle = self.draw(1)
@@ -128,6 +135,11 @@ class Deck:
     def check_match(self, card):
         """
         Check that the discarded card from the player's hand matches the top card on the deck
+
+        Args:
+            card: a card to checked against the middle card to make sure it is a match
+        Returns:
+            a boolean true if it a match, false if not a match
         """
         #type_of_card = card
         middle_card = self.middle[0]
@@ -140,6 +152,11 @@ class Deck:
     def check_action(self, card):
         """
         Check that the card is an action card
+
+        Args:
+            card: a card to check if it is a action card
+        Returns
+            a boolean, true if the card is an action, false otherwise
         """
         if card.rank in range(10, 15):
             return True
@@ -159,6 +176,10 @@ class Player:
     def __init__(self, Deck, name):
         """
         Store initial values to arguments
+
+        Args:
+            Deck: a deck object that the player is connected to
+            name: a string representing the player's name
         """
         self._deck = Deck
         self._hand = self._deck.draw(7)
@@ -166,25 +187,52 @@ class Player:
 
     @property
     def deck(self):
+        """
+        Access the private variable _deck
+
+        Returns:
+            the list contained in _deck
+        """
         return self._deck
 
     @property
     def hand(self):
+        """
+        Access the private variable _hand
+
+        Returns:
+            the list contained in _hand
+        """
         return self._hand
 
     @property
     def name(self):
+        """
+        Access the private variable _name
+
+        Returns:
+            the string contained in _name
+        """
         return self._name
 
     def display_name(self):
         """
         Display player's name.
+
+        Return:
+            a string representing the player's name
         """
         return self.name
 
     def play_card(self, card):
         """
-        Allow the player to discard a card from their hands
+        Allow the player to discard a card from their hands doing multiple checks
+        if the card is a match to the middle and it is actually in your hand
+
+        Args:
+            card: a card representing the card the player wants to play
+        Returns:
+            a boolean representing if the move was successful or not
         """
         try:
             if len(self.hand) == 0:
@@ -209,18 +257,30 @@ class Player:
     def draw(self, number_of_cards):
         """
         Allows the player to draw card/cards from the deck
+
+        Args:
+            number_of_cards: a int representing the number of cards to draw from the deck
         """
         self._hand += self._deck.draw(number_of_cards)
 
     def check_empty(self):
         """
-        Check if the player has no card left in the hand. If so, the player wins.
+        Check if the player has no card left in the hand
+
+        Returns:
+            a boolean, true if the hand is empty false otherwise
         """
         if len(self._hand) == 0:
             return True
         return False
 
     def __repr__(self):
+        """
+        A string representation of player
+        
+        Returns:
+            a string to represent the player
+        """
         string = ""
         for n in range(0, len(self._hand)):
             string = string + f"Card {n+1}: {self._hand[n]}\n"
@@ -242,7 +302,6 @@ class PlayGame:
     direction: an int representing which direction the list is being cycled through
     current_player: a integer referring to the order of the current player
     next_turn: an integer which decides the next player after current player's turn
-    skip_card_played:
     color_chosen: an input argument which allows the player to enter the next color they want to play after discarding a wild card
     valid_colors: a list containing the colors that are valid might appear in the set of cards
     card_pos: an input argument which allows the player to enter the position of the card they want to play/discard from the hand
@@ -253,6 +312,9 @@ class PlayGame:
     def __init__(self, deck, player_names):
         """
         Store initial values of arguments
+
+        Deck: a deck object that the game is connected to
+        name: a list representing the players' names
         """
         self.deck = deck
         self.deck.shuffle()
@@ -270,6 +332,9 @@ class PlayGame:
     def next_player(self):
         """
         Allow the next player in the turn to play game 
+        
+        Returns:
+            a int representing the next player position in the player list
         """
         next_turn = self.current_player+1*self.direction
         if next_turn == -1:
@@ -280,20 +345,25 @@ class PlayGame:
 
     def draw_card_played(self, number_of_cards):
         """
-        Define the next player when a Draw Two card is played
+        Updates the game state after a draw card is played, gives cards to next player
+        and skips next player
+
+        Args:
+            number_of_cards: a int representing the number of cards to draw
         """
         self.player_list[self.next_player()].draw(number_of_cards)
         self.skip_card_played()
 
     def reverse_card_played(self):
         """
-        Define the next player when a Reverse card is played
+        Reverse the direction of the game when a reverse card is played
         """
         self.direction = self.direction*-1
 
     def wild_card_played(self):
         """
-        Define the next player when a Wild Card is played
+        Updates the middle card when a wild card is played which asks for user input
+        to choose the color of the middle card
         """
         color_chosen = input(
             "Choose one of the colors, type as seen: Red/Green/Blue/Yellow: ")
@@ -306,6 +376,12 @@ class PlayGame:
     def check_for_matches(self, player):
         """
         Check if the card in the player's hand matches the card in the middle of the deck
+        if the player does not have any matching cards it adds cards to hand until a match is found
+
+        Args:
+            player: a player representing the player to check their hand for matches
+        Returns:
+            return true once a match is found otherwise it recursively looks for a match
         """
         for card in player.hand:
             if self.deck.check_match(card):
@@ -317,13 +393,16 @@ class PlayGame:
 
     def skip_card_played(self):
         """
-        Define the next player when a Skip Card is played
+        Updates the game state to skip the next player once a skip card is played
         """
         self.current_player = self.next_player()
 
     def check_win(self):
         """
-        Check if any player has run out off all the cards in the hand; if so, the player wins
+        Check if any player has run out off all the cards in the hand
+
+        Returns:
+            a boolean returning true if a player has zero cards otherwise returns false
         """
         for player in self.player_list:
             if len(player._hand) == 0:
@@ -331,6 +410,14 @@ class PlayGame:
         return False
 
     def player_turn(self, player, card_pos):
+        """
+        Updates the game state for a player turn and make sure valid input is given
+        
+        Args:
+            player: a player representing the player whose turn it is currently
+            card_pos: a int representing the position of the card in the player hand that the
+            player wishes to the player
+        """
         try:
             card_pos = int(card_pos) - 1
             if card_pos > len(player._hand)-1:
@@ -355,6 +442,9 @@ class PlayGame:
             self.current_player = self.current_player - 1*self.direction
 
     def play(self):
+        """
+        Runs and update the game state of uno for one complete turn
+        """
         uno_declare = ""
         print(f"It is {self.player_list[self.current_player]._name}'s Turn")
         self.check_for_matches(self.player_list[self.current_player])
@@ -378,7 +468,10 @@ class PlayGame:
 
     def win_message(self, player):
         """
-        Print out the winning message
+        Print out the winning message according to the player
+
+        Args:
+            player: a player representing the player which has won
         """
         print(
             f"Congrats {player._name}! You have won! Please continue to rub it in your opponents face now")
