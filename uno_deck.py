@@ -146,7 +146,6 @@ class Deck:
         Returns:
             a boolean true if it a match, false if not a match
         """
-        #type_of_card = card
         middle_card = self.middle[0]
         if middle_card.clr == card.clr or card.clr == "Wild":
             return True

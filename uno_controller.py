@@ -35,7 +35,6 @@ class UnoController(ABC):
         """
         Send the start singal to the game.
         """
-        pass
 
 
 class TextController(UnoController):

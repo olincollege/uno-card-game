@@ -35,7 +35,6 @@ class UnoView(ABC):
         """
         Display a representation of the current state of the game
         """
-        pass
 
 
 class TextView(UnoView):
