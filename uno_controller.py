@@ -9,7 +9,7 @@ class UnoController(ABC):
     Abstract base class representing a controller for a Uno game.
 
     Attributes:
-        _board: A Uno instance representing the Uno game to
+        _deck: A Uno instance representing the Uno game to
             send moves to.
     """
 
@@ -18,7 +18,7 @@ class UnoController(ABC):
         Create a new controller of a uno game.
 
         Args:
-            board: A Uno game instance representing the uno game
+            deck: A Uno game instance representing the uno game
                 to control.
         """
         self._deck = deck

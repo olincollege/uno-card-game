@@ -1,5 +1,5 @@
 """
-Tic-tac-toe game view.
+Uno game view.
 """
 from abc import ABC, abstractmethod
 
@@ -9,7 +9,7 @@ class UnoView(ABC):
     Abstract base class representing a view of a Uno game.
 
     Attributes:
-        _board: A Uno game instance representing the uno game
+        _game: A Uno game instance representing the uno game
                 to display.
     """
 
