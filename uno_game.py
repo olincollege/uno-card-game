@@ -23,8 +23,8 @@ def main():
         uno_set = Deck()
         uno_controller = TextController(uno_set)
         names = uno_controller.start()
-        uno_set.game_start()
         uno_game = PlayGame(uno_set, names)
+        uno_set.game_start()
         view = TextView(uno_game)
         while not uno_game.check_win():
             view.display()

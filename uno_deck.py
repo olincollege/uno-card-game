@@ -1,3 +1,6 @@
+"""
+A Uno game implementation
+"""
 import random
 
 
@@ -24,14 +27,13 @@ class Card:
 
     def __repr__(self):
         """
-        Define the rank of special cards (including Draw Two, Reverse, Skip, Wild and Wild Draw Four cards) in the card list
+        Define the rank of special cards (including Draw Two, Reverse, Skip, Wild and\
+            Wild Draw Four cards) in the card list
 
         Return:
             a list? that represents the information of a card's color and number
         """
-        # Draw Two = 10, Reverse=11, Skip=12
-        # We still have think about the wild and wild draw 4
-        # Solution to Question 1 (below) goes here
+        # Draw Two = 10, Reverse=11, Skip=12, Wild Card = 13, Wild Draw Four = 14
         if self.rank == 10:
             rank = "Draw Two"
         elif self.rank == 11:
@@ -57,9 +59,12 @@ class Deck:
     number_of_cards: an integer representing the total number of cards left in the deck
     drawn_cards: a list containing the cards drawn to players from the deck
     pos: a number which represents the position of the card in the deck
-    possible_card: a method defined in the previous class which represents the cards that might appear in the deck
-    invalid_colors: a list containing the colors that are not valid and should be discarded if appearing to be the first of the deck
-    invalid_numbers: a list containing the numbers that are not valid and should be discarded if appearing to be the first of the deck
+    possible_card: a method defined in the previous class which represents the cards that might \
+        appear in the deck
+    invalid_colors: a list containing the colors that are not valid and should be discarded if \
+        appearing to be the first of the deck
+    invalid_numbers: a list containing the numbers that are not valid and should be discarded if \
+        appearing to be the first of the deck
     new_middle: a list representing the cards in the reshuffled deck
     middle_card: a list containing cards in the deck
     """
@@ -145,7 +150,7 @@ class Deck:
         middle_card = self.middle[0]
         if middle_card.clr == card.clr or card.clr == "Wild":
             return True
-        elif middle_card.rank == card.rank:
+        if middle_card.rank == card.rank:
             return True
         return False
 
@@ -173,7 +178,7 @@ class Player:
 
     """
 
-    def __init__(self, Deck, name):
+    def __init__(self, deck, name):
         """
         Store initial values to arguments
 
@@ -181,7 +186,7 @@ class Player:
             Deck: a deck object that the player is connected to
             name: a string representing the player's name
         """
-        self._deck = Deck
+        self._deck = deck
         self._hand = self._deck.draw(7)
         self._name = name
 
@@ -277,21 +282,19 @@ class Player:
     def __repr__(self):
         """
         A string representation of player
-        
+
         Returns:
             a string to represent the player
         """
         string = ""
-        for n in range(0, len(self._hand)):
-            string = string + f"Card {n+1}: {self._hand[n]}\n"
+        for count in range(0, len(self._hand)):
+            string = string + f"Card {count+1}: {self._hand[count]}\n"
         return string
 
 
 class PlayGame:
     """
     iterate through the game
-    color_chosen: an input argument which allows players to enter the color of the card they want to play/discard
-    valid
 
     Attributes:
     player_list: a list representing all the players in the game in sequence
@@ -302,9 +305,11 @@ class PlayGame:
     direction: an int representing which direction the list is being cycled through
     current_player: a integer referring to the order of the current player
     next_turn: an integer which decides the next player after current player's turn
-    color_chosen: an input argument which allows the player to enter the next color they want to play after discarding a wild card
+    color_chosen: an input argument which allows the player to enter the next color they want to \
+        play after discarding a wild card
     valid_colors: a list containing the colors that are valid might appear in the set of cards
-    card_pos: an input argument which allows the player to enter the position of the card they want to play/discard from the hand
+    card_pos: an input argument which allows the player to enter the position of the card they \
+        want to play/discard from the hand
     """
 
     player_list = []
@@ -331,8 +336,8 @@ class PlayGame:
 
     def next_player(self):
         """
-        Allow the next player in the turn to play game 
-        
+        Allow the next player in the turn to play game
+
         Returns:
             a int representing the next player position in the player list
         """
@@ -388,7 +393,7 @@ class PlayGame:
                 return True
         player.draw(1)
         print("You had no matches so you take from the deck, here is your new hand")
-        print(player._hand)
+        print(player.hand)
         return self.check_for_matches(player)
 
     def skip_card_played(self):
@@ -405,14 +410,14 @@ class PlayGame:
             a boolean returning true if a player has zero cards otherwise returns false
         """
         for player in self.player_list:
-            if len(player._hand) == 0:
+            if len(player.hand) == 0:
                 return True
         return False
 
     def player_turn(self, player, card_pos):
         """
         Updates the game state for a player turn and make sure valid input is given
-        
+
         Args:
             player: a player representing the player whose turn it is currently
             card_pos: a int representing the position of the card in the player hand that the
@@ -420,9 +425,9 @@ class PlayGame:
         """
         try:
             card_pos = int(card_pos) - 1
-            if card_pos > len(player._hand)-1:
+            if card_pos > len(player.hand)-1:
                 raise IndexError
-            if not player.play_card(player._hand[card_pos]):
+            if not player.play_card(player.hand[card_pos]):
                 raise ValueError
             if self.deck.check_action(self.deck.middle[0]):
                 action = self.deck.middle[0].rank
@@ -446,23 +451,24 @@ class PlayGame:
         Runs and update the game state of uno for one complete turn
         """
         uno_declare = ""
-        print(f"It is {self.player_list[self.current_player]._name}'s Turn")
+        print(f"It is {self.player_list[self.current_player].name}'s Turn")
         self.check_for_matches(self.player_list[self.current_player])
         print(f"This is your hand:\n{self.player_list[self.current_player]}")
         card_pos = input(
-            f"{self.player_list[self.current_player]._name} which card do you want to play type 1 or 2 or ...: ")
+            f"{self.player_list[self.current_player].name} which card do you want to " +
+            "play type 1 or 2 or ...: ")
         self.player_turn(self.player_list[self.current_player], card_pos)
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         uno_declare = input("Hit enter once you are finished with your turn ")
-        if len(self.player_list[self.current_player]._hand) == 1 and uno_declare != "Uno!":
+        if len(self.player_list[self.current_player].hand) == 1 and uno_declare != "Uno!":
             self.player_list[self.current_player].draw(2)
             print("You forgot to say Uno :( you have to draw two cards")
-        elif len(self.player_list[self.current_player]._hand) == 1 and uno_declare == "Uno":
+        elif len(self.player_list[self.current_player].hand) == 1 and uno_declare == "Uno":
             print("Uno!")
         self.current_player = self.next_player()
         input(
-            f"Hit Enter once {self.player_list[self.current_player]._name} is at the computer")
+            f"Hit Enter once {self.player_list[self.current_player].name} is at the computer")
         print(
             f"\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is the card in the middle: {self.deck.middle[0]}")
 
@@ -473,5 +479,5 @@ class PlayGame:
         Args:
             player: a player representing the player which has won
         """
-        print(
-            f"Congrats {player._name}! You have won! Please continue to rub it in your opponents face now")
+        print(f"Congrats {player.name}! You have won! Please continue" +
+              "to rub it in your opponents face now")

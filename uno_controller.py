@@ -44,14 +44,12 @@ class TextController(UnoController):
     player names.
     """
 
-    from uno_deck import PlayGame
-
     def start(self):
         """
         Obtain text input from the user to give names to the players and start the game.
         """
-        names = input("Input four players names with a single space in between \
-            (e.g., \"name1 name2 ...\"): ").split()
+        names = input("Input four players names with a single space in between " +
+                      "(e.g., \"name1 name2 ...\"): ").split()
         try:
             if len(names) != 4:
                 raise ValueError
